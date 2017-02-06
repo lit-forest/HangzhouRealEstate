@@ -1,10 +1,11 @@
 {
-  "name": "font",
+  "name": "hzfc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "cheerio": "^0.22.0"
+    "cheerio": "^0.22.0",
+    "express": "^4.14.1"
   },
   "devDependencies": {},
   "scripts": {

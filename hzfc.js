@@ -2,21 +2,28 @@ var http = require('http');
 var cheerio = require('cheerio');
 var url = 'http://www.tmsf.com/daily.htm';
 
-http.get(url, function (res) {
-    var html = '';
-    res.on('data', function (data) {
-        html += data;
-    });
-    res.on('end', function () {
-        filterChapters(html);
-    });
-    res.on('error', function () {
-        console.log('获取数据出错');
-    });
-})
+function getHzfcSaleInfo(callBack) {
+    var hzfcSaleInfo = [];
+    http.get(url, function (res) {
+        var html = '';
+        res.on('data', function (data) {
+            html += data;
+        });
+        res.on('end', function () {
+            hzfcSaleInfo = filterChapters(html);
+            callBack(hzfcSaleInfo);
+        });
+        res.on('error', function () {
+            console.log('获取数据出错');
+        });
+    })
+    // return hzfcSaleInfo;
+}
+
 
 function filterChapters(html) {
     var $ = cheerio.load(html);
+    var data = [];
     var container = $('#myCont2')
     var districts = container.find('table');
     districts.each(function () {
@@ -37,7 +44,7 @@ function filterChapters(html) {
                 if (i == 0) {
                     estateName = col.find('a').text();
                 } else if (i == 1) {
-                    estateSite = col.text().replace(/[^\u4e00-\u9fa5]/gi,"");
+                    estateSite = col.text().replace(/[^\u4e00-\u9fa5]/gi, "");
                 } else if (i == 2) {
                     var spanClass = '';
                     var spans = col.find('span');
@@ -86,9 +93,13 @@ function filterChapters(html) {
                 estateArea: estateArea,
                 estatePrice: estatePrice
             }
-            console.log(estateData)
+            //console.log(estateData);
+            if (estateData.estateName) {
+                data.push(estateData);
+            }
         })
     })
+    return data;
 }
 function classNameToNumb(className) {
     var numb;
@@ -112,9 +123,10 @@ function classNameToNumb(className) {
         numb = '8';
     } else if (className == 'numbnine') {
         numb = '9';
-    }else if (className == 'numbdor') {
+    } else if (className == 'numbdor') {
         numb = '.';
     }
     return numb;
 }
 
+module.exports = getHzfcSaleInfo;
