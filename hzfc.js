@@ -1,5 +1,6 @@
 var http = require('http');
 var cheerio = require('cheerio');
+
 var url = 'http://www.tmsf.com/daily.htm';
 
 function getHzfcSaleInfo(callBack) {

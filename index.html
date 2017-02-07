@@ -4,80 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>杭州房产销售展示</title>
-    <style>
-        #map,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0 auto;
-            position: absolute;
-        }
-        
-        .info {
-            border: solid 1px silver;
-            width: 150px;
-        }
-        
-        div.info-top {
-            position: relative;
-            background: none repeat scroll 0 0 #F9F9F9;
-            border-bottom: 1px solid #CCC;
-            border-radius: 5px 5px 0 0;
-        }
-        
-        div.info-top div {
-            display: inline-block;
-            color: #333333;
-            font-size: 14px;
-            font-weight: bold;
-            line-height: 31px;
-            padding: 0 10px;
-        }
-        
-        div.info-top img {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            transition-duration: 0.25s;
-        }
-        
-        div.info-top img:hover {
-            box-shadow: 0px 0px 5px #000;
-        }
-        
-        div.info-middle {
-            font-size: 12px;
-            padding: 6px;
-            line-height: 20px;
-        }
-        
-        div.info-bottom {
-            height: 0px;
-            width: 100%;
-            clear: both;
-            text-align: center;
-        }
-        
-        div.info-bottom img {
-            position: relative;
-            z-index: 104;
-        }
-        
-        span {
-            margin-left: 5px;
-            font-size: 11px;
-        }
-        
-        .info-middle img {
-            float: left;
-            margin-right: 6px;
-        }
-    </style>
+    <link rel="stylesheet" href="http://localhost:8081/css/page.css">
      <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
 </head>
 
 <body>
     <div id='map'></div>
+    <div class='legend'>
+        <img src='http://localhost:8081/img/icon0.png' class="img"><span class="img0">1W</span><br/>
+        <img src='http://localhost:8081/img/icon1.png' class="img"><span class="img1">1-1.5W</span><br/>
+        <img src='http://localhost:8081/img/icon2.png' class="img"><span class="img2">1.5-2.0W</span><br/>
+        <img src='http://localhost:8081/img/icon3.png' class="img"><span class="img3">2.0-2.5W</span><br/>
+        <img src='http://localhost:8081/img/icon4.png' class="img"><span class="img4">2.5-3.0W</span><br/>
+        <img src='http://localhost:8081/img/icon5.png' class="img"><span class="img5">3.0W</span><br/>
+    </div>
     <div class='button-group' style="background-color: #0d9bf2">
         <input type='radio' onclick='refresh(this.value)' name='mapStyle' value='normal'>normal
         <input type='radio' onclick='refresh(this.value)' name='mapStyle' value='blue_night'>blue_night
@@ -88,11 +28,6 @@
     <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=33ec0397d52d437f35a203da408ce5e9"></script>
     <script src='http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js'></script>
     <script src="http://localhost:8081/js/showData.js"></script>
-    <script>
-     function refresh(e) {
-        map.setMapStyle(e);
-     }
-    </script>
 </body>
 
 </html>

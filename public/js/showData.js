@@ -125,3 +125,7 @@ function createInfoWindow(title, content) {
 function closeInfoWindow() {
     map.clearInfoWindow();
 }
+
+function refresh(e) {
+    map.setMapStyle(e);
+}
