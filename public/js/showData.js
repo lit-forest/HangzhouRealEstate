@@ -19,6 +19,11 @@ $.ajax({
     }
 })
 function showInfo(data) {
+    var saleTotal = document.getElementsByClassName('total')[0];
+    var d = new Date();
+    var str = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    saleTotal.innerHTML = str + '日杭州房产销售总量：' + data.length;
+    console.log(saleTotal)
     AMap.plugin('AMap.Geocoder', function () {
         var len = data.length;
         var geocoder = new AMap.Geocoder({
