@@ -10,31 +10,33 @@ $.ajax({
     cache: false,
     contentType: false,
     processData: false,
-    success: function (data) {
+    success: function(data) {
         var hzfcSaleInfo = JSON.parse(data).data;
         showInfo(hzfcSaleInfo);
     },
-    error: function () {
+    error: function() {
         console.log('后台抓取数据失败！')
     }
 })
+
 function showInfo(data) {
     var saleTotal = document.getElementsByClassName('total')[0];
     var d = new Date();
     var str = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
     saleTotal.innerHTML = str + '日杭州房产销售总量：' + data.length;
-    console.log(saleTotal)
-    AMap.plugin('AMap.Geocoder', function () {
+    //console.log(saleTotal)
+    AMap.plugin('AMap.Geocoder', function() {
         var len = data.length;
         var geocoder = new AMap.Geocoder({
-            city: "杭州"//城市
+            city: "杭州" //城市
         });
         showSingle(data, 0)
+
         function showSingle(data, n) {
             if (n >= len) {
                 return;
             }
-            geocoder.getLocation(data[n].estateName, function (status, result) {
+            geocoder.getLocation(data[n].estateName, function(status, result) {
                 if (status == 'complete' && result.geocodes.length) {
                     //var price = parseInt(data[n].estatePrice)
                     var marker = priceMarker(data[n].estatePrice, result)
@@ -46,11 +48,11 @@ function showInfo(data) {
                     content.push("销售总面积：" + data[n].estateArea);
                     content.push("预定套数：" + data[n].estateReserve);
                     var infoWindow = new AMap.InfoWindow({
-                        isCustom: true,  //使用自定义窗体
+                        isCustom: true, //使用自定义窗体
                         content: createInfoWindow(title, content.join("<br/>")),
                         offset: new AMap.Pixel(16, -45)
                     });
-                    AMap.event.addListener(marker, 'click', function () {
+                    AMap.event.addListener(marker, 'click', function() {
                         infoWindow.open(map, marker.getPosition());
                     });
                     showSingle(data, n + 1);
@@ -61,6 +63,7 @@ function showInfo(data) {
         }
     })
 }
+
 function priceMarker(estatePrice, result) {
     var price = parseInt(estatePrice);
     var iconUrl;
@@ -87,6 +90,7 @@ function priceMarker(estatePrice, result) {
     });
     return marker
 }
+
 function createInfoWindow(title, content) {
     var info = document.createElement("div");
     info.className = "info";

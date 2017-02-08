@@ -5,28 +5,28 @@ var app = express();
 
 app.use(express.static('public'));
 
-app.get('/index.html', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
-app.get('/test.js', function (req, res) {
-    res.sendFile(__dirname + '/test.js');
-});
-
-app.get('/getHzfcSaleInfo', function (req, res) {
-    var hzfcSaleInfo = getHzfcSaleInfo(function (data) {
-       // console.log(data);
+//处理前台页面的数据请求
+app.get('/getHzfcSaleInfo', function(req, res) {
+    /**
+     * 处理前台页面ajax请求
+     * 返回给前台全部的处理数据
+     * @param {any} data
+     */
+    var hzfcSaleInfo = getHzfcSaleInfo(function(data) {
         res.end(JSON.stringify({ data: data }));
+        // data.forEach(function(item) {
+        //     if (item.estateName) {
+        //         console.log(item.estateName + ' ' + item.estateSite + ' ' + item.estateSign + ' ' + item.estateReserve + ' ' + item.estateArea + ' ' + item.estatePrice + '\n');
+        //     }
+        // })
     });
-    // hzfcSaleInfo.forEach(function (item) {
-    //     if (item.estateName) {
-    //         console.log(item.estateName + ' ' + item.estateSite + ' ' + item.estateSign + ' ' + item.estateReserve + ' ' + item.estateArea + ' ' + item.estatePrice + '\n');
-    //     }
-    // })
+
     //res.end(hzfcSaleInfo);
 });
 
-var server = app.listen(8081, function () {
-    var host = server.address().address;
-    var port = server.address().address;
-    console.log('web server start success');
+/**
+ * 启动web server
+ */
+var server = app.listen(8081, function() {
+    console.log('web server start success', '访问地址为：http://localhost:8081/index.html');
 })

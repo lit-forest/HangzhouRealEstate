@@ -1,36 +1,44 @@
 var http = require('http');
 var cheerio = require('cheerio');
 
+//定义爬虫数据源网络地址
 var url = 'http://www.tmsf.com/daily.htm';
 
+/**
+ * 请求网络地址抓取数据
+ * @param {function} callBack 传回爬虫数据处理之后的最终结果
+ */
 function getHzfcSaleInfo(callBack) {
     var hzfcSaleInfo = [];
-    http.get(url, function (res) {
+    http.get(url, function(res) {
         var html = '';
-        res.on('data', function (data) {
+        res.on('data', function(data) {
             html += data;
         });
-        res.on('end', function () {
-            hzfcSaleInfo = filterChapters(html);
+        res.on('end', function() {
+            hzfcSaleInfo = filterData(html);
             callBack(hzfcSaleInfo);
         });
-        res.on('error', function () {
+        res.on('error', function() {
             console.log('获取数据出错');
         });
     })
-    // return hzfcSaleInfo;
 }
 
-
-function filterChapters(html) {
+/**
+ * 解析DOM节点，提取核心数据
+ * @param {string} html 页面整体html
+ * @returns {array} 最终处理之后的数据
+ */
+function filterData(html) {
     var $ = cheerio.load(html);
     var data = [];
     var container = $('#myCont2')
     var districts = container.find('table');
-    districts.each(function () {
+    districts.each(function() {
         var district = $(this);
         var trs = district.find('tr');
-        trs.each(function () {
+        trs.each(function() {
             var tr = $(this);
             var tds = tr.find('td');
             var i = 0;
@@ -40,7 +48,7 @@ function filterChapters(html) {
             var estateReserve;
             var estateArea;
             var estatePrice;
-            tds.each(function () {
+            tds.each(function() {
                 var col = $(this);
                 if (i == 0) {
                     estateName = col.find('a').text();
@@ -49,7 +57,7 @@ function filterChapters(html) {
                 } else if (i == 2) {
                     var spanClass = '';
                     var spans = col.find('span');
-                    spans.each(function (a) {
+                    spans.each(function(a) {
                         var span = $(this);
                         var cssName = classNameToNumb(span.attr('class'));
                         spanClass = spanClass + cssName;
@@ -58,17 +66,16 @@ function filterChapters(html) {
                 } else if (i == 3) {
                     var spanClass = '';
                     var spans = col.find('span');
-                    spans.each(function (a) {
+                    spans.each(function(a) {
                         var span = $(this);
                         var cssName = classNameToNumb(span.attr('class'));
                         spanClass = spanClass + cssName;
                     });
                     estateReserve = spanClass;
-                }
-                else if (i == 4) {
+                } else if (i == 4) {
                     var spanClass = '';
                     var spans = col.find('span');
-                    spans.each(function (a) {
+                    spans.each(function(a) {
                         var span = $(this);
                         var cssName = classNameToNumb(span.attr('class'));
                         spanClass = spanClass + cssName;
@@ -77,7 +84,7 @@ function filterChapters(html) {
                 } else if (i == 5) {
                     var spanClass = '';
                     var spans = col.find('span');
-                    spans.each(function (a) {
+                    spans.each(function(a) {
                         var span = $(this);
                         var cssName = classNameToNumb(span.attr('class'));
                         spanClass = spanClass + cssName;
@@ -94,7 +101,6 @@ function filterChapters(html) {
                 estateArea: estateArea,
                 estatePrice: estatePrice
             }
-            //console.log(estateData);
             if (estateData.estateName) {
                 data.push(estateData);
             }
@@ -102,6 +108,12 @@ function filterChapters(html) {
     })
     return data;
 }
+
+/**
+ * 根据class name 提取数值
+ * @param {string} className 节点class name
+ * @returns 数值
+ */
 function classNameToNumb(className) {
     var numb;
     if (className == 'numbzero') {
