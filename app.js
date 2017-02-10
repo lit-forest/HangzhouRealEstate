@@ -1,32 +1,27 @@
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var express = require('express');
 var getHzfcSaleInfo = require('./hzfc');
 
-var app = express();
+//建立socket链接并定时(10分钟)发送数据
+io.on('connection', function(socket) {
+    setData();
+    setInterval(setData, 10 * 60 * 1000);
+});
+//发送数据
+function setData() {
+    getHzfcSaleInfo(function(data) {
+        io.emit('getData', JSON.stringify({ data: data }));
+    });
+}
+
 
 app.use(express.static('public'));
-
-//处理前台页面的数据请求
-app.get('/getHzfcSaleInfo', function(req, res) {
-    /**
-     * 处理前台页面ajax请求
-     * 返回给前台全部的处理数据
-     * @param {any} data
-     */
-    var hzfcSaleInfo = getHzfcSaleInfo(function(data) {
-        res.end(JSON.stringify({ data: data }));
-        // data.forEach(function(item) {
-        //     if (item.estateName) {
-        //         console.log(item.estateName + ' ' + item.estateSite + ' ' + item.estateSign + ' ' + item.estateReserve + ' ' + item.estateArea + ' ' + item.estatePrice + '\n');
-        //     }
-        // })
-    });
-
-    //res.end(hzfcSaleInfo);
-});
 
 /**
  * 启动web server
  */
-var server = app.listen(8081, function() {
-    console.log('web server start success', '访问地址为：http://localhost:8081/index.html');
+http.listen(8081, function() {
+    console.log('web server start success', 'listen:http://localhost:8081/index.html');
 })

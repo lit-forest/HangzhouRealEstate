@@ -4,27 +4,23 @@ var map = new AMap.Map('map', {
     center: [120.197428, 30.20923],
     mapStyle: 'dark',
 });
-$.ajax({
-    url: 'http://localhost:8081/getHzfcSaleInfo',
-    type: 'GET',
-    cache: false,
-    contentType: false,
-    processData: false,
-    success: function(data) {
-        var hzfcSaleInfo = JSON.parse(data).data;
-        showInfo(hzfcSaleInfo);
-    },
-    error: function() {
-        console.log('后台抓取数据失败！')
-    }
-})
+var socket = io();
 
+socket.on('getData', function(data) {
+    var hzfcSaleInfo = JSON.parse(data).data;
+    showInfo(hzfcSaleInfo);
+});
+
+/**
+ * 在页面上展示后台抓取的数据
+ * @param {object} data
+ */
 function showInfo(data) {
+    map.clearMap();
     var saleTotal = document.getElementsByClassName('total')[0];
     var d = new Date();
     var str = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
     saleTotal.innerHTML = str + '日杭州房产销售总量：' + data.length;
-    //console.log(saleTotal)
     AMap.plugin('AMap.Geocoder', function() {
         var len = data.length;
         var geocoder = new AMap.Geocoder({
@@ -32,13 +28,18 @@ function showInfo(data) {
         });
         showSingle(data, 0)
 
+        /**
+         * 递归方法 
+         * @param {object} data
+         * @param {int} n
+         * @returns
+         */
         function showSingle(data, n) {
             if (n >= len) {
                 return;
             }
             geocoder.getLocation(data[n].estateName, function(status, result) {
                 if (status == 'complete' && result.geocodes.length) {
-                    //var price = parseInt(data[n].estatePrice)
                     var marker = priceMarker(data[n].estatePrice, result)
                     var title = result.geocodes[0].formattedAddress.replace("浙江省杭州市", "") + '<br/><span style="font-size:11px;color:#F00;">价格:' + data[n].estatePrice + '</span>',
                         content = [];
@@ -64,6 +65,12 @@ function showInfo(data) {
     })
 }
 
+/**
+ * 根据楼盘的价格显示不同的图标
+ * @param {string} estatePrice
+ * @param {object} result
+ * @returns
+ */
 function priceMarker(estatePrice, result) {
     var price = parseInt(estatePrice);
     var iconUrl;
@@ -91,6 +98,12 @@ function priceMarker(estatePrice, result) {
     return marker
 }
 
+/**
+ * 创建自定义信息窗体
+ * @param {string} title
+ * @param {string} content
+ * @returns
+ */
 function createInfoWindow(title, content) {
     var info = document.createElement("div");
     info.className = "info";
@@ -130,11 +143,17 @@ function createInfoWindow(title, content) {
     return info;
 }
 
-//关闭信息窗体
+/**
+ *关闭信息窗体 
+ */
 function closeInfoWindow() {
     map.clearInfoWindow();
 }
 
+/**
+ * 切换地图底图的颜色
+ * @param {string} e
+ */
 function refresh(e) {
     map.setMapStyle(e);
 }
